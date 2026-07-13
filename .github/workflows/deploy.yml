@@ -1,4 +1,4 @@
-name: 自动部署博客到GitHub Pages
+name: Deploy MkDocs site
 on:
   push:
     branches: [ main ]
@@ -6,13 +6,17 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: 拉取仓库代码
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: 配置Python环境
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
-      - name: 安装MkDocs依赖
+          python-version: "3.11"
+      - name: 安装mkdocs依赖
         run: pip install mkdocs mkdocs-material
-      - name: 生成静态页面并部署
-        run: mkdocs gh-deploy --force
+      - name: 生成静态网页
+        run: mkdocs build
+      - name: 部署到GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
